@@ -2,7 +2,7 @@ package com.bc.ur;
 
 public class URDecoder extends NativeWrapper {
 
-    URDecoder() {
+    public URDecoder() {
         super(BCUR.URDecoder_new());
     }
 
