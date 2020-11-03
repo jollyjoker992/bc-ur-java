@@ -104,6 +104,5 @@ libwallycore.so
 Wally.java
 keystores/release.keystore
 keystores/release.properties
-*.properties
 
 # End of Specific for project
