@@ -5,7 +5,6 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
-import java.util.*
 
 
 @RunWith(AndroidJUnit4::class)
@@ -31,17 +30,23 @@ class URDecoderTest {
             decoder.receivePart(part)
         } while (!decoder.isComplete)
 
-        if (decoder.isSuccess) {
-            val resultUR = decoder.resultUR()
-            assertEquals(ur.type, resultUR.type)
-            assertTrue(ur.cbor.toTypedArray().contentDeepEquals(resultUR.cbor.toTypedArray()))
-        } else {
-            val ex = decoder.resultError()
-            throw ex
+        // make sure resultUR return exact UR entered before
+        val resultUR = decoder.resultUR()
+        assertEquals(ur.type, resultUR.type)
+        assertTrue(
+            ur.cbor.toTypedArray().contentDeepEquals(resultUR.cbor.toTypedArray())
+        )
+
+        // make sure getting resultError throw IllegalStateException
+        try {
+            decoder.resultError()
+            throw RuntimeException("test failed due to checking resultError")
+        } catch (e: IllegalStateException) {
+            assertTrue(true)
         }
     }
 
-    @Test(expected = IllegalStateException::class)
+    @Test
     fun testDecodeError() {
         arrayOf(
             "",
@@ -49,7 +54,12 @@ class URDecoderTest {
             "ur:ur:ur",
             "uf:bytes/hdeymejtswhhylkepmykhhtsytsnoyoyaxaedsuttydmmhhpktpmsrjtgwdpfnsboxgwlbaawzuefywkdplrsrjynbvygabwjldapfcsdwkbrkch"
         ).forEach {
-            URDecoder.decode(it)
+            try {
+                URDecoder.decode(it)
+                throw RuntimeException("test failed due to $it")
+            } catch (ignore: IllegalStateException) {
+            }
+
         }
 
     }

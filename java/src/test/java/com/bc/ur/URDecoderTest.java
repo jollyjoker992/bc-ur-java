@@ -6,8 +6,7 @@ import org.junit.runners.JUnit4;
 
 import java.util.Arrays;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 
 @RunWith(JUnit4.class)
@@ -31,18 +30,23 @@ public class URDecoderTest {
         do {
             String part = encoder.nextPart();
             decoder.receivePart(part);
-        } while (!decoder.isComplete());
+        }while (!decoder.isComplete());
 
-        if (decoder.isSuccess()) {
-            UR resultUR = decoder.resultUR();
-            assertEquals(ur.getType(), resultUR.getType());
-            assertTrue(Arrays.deepEquals(TestUtils.toTypedArray(ur.getCbor()), TestUtils.toTypedArray(resultUR.getCbor())));
-        } else {
-            throw decoder.resultError();
+        // make sure resultUR return exact UR entered before
+        UR resultUR = decoder.resultUR();
+        assertEquals(ur.getType(), resultUR.getType());
+        assertTrue(Arrays.deepEquals(TestUtils.toTypedArray(ur.getCbor()), TestUtils.toTypedArray(resultUR.getCbor())));
+
+        // make sure getting resultError throw IllegalStateException
+        try {
+            decoder.resultError();
+            throw new RuntimeException("test failed due to checking resultError");
+        } catch (IllegalStateException e) {
+            assertTrue(true);
         }
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void testDecodeError() {
         String[] invalidData = new String[]{
                 "",
@@ -51,7 +55,11 @@ public class URDecoderTest {
                 "uf:bytes/hdeymejtswhhylkepmykhhtsytsnoyoyaxaedsuttydmmhhpktpmsrjtgwdpfnsboxgwlbaawzuefywkdplrsrjynbvygabwjldapfcsdwkbrkch"
         };
         for (String it : invalidData) {
-            URDecoder.decode(it);
+            try {
+                URDecoder.decode(it);
+                throw new RuntimeException("test failed due to " + it);
+            } catch (IllegalStateException ignore) {
+            }
         }
     }
 }

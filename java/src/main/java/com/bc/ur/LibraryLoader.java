@@ -11,11 +11,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class LibraryLoader {
+class LibraryLoader {
 
     private static final String SODIUM_LIBRARY = "sodiumjni";
 
-    public enum CPU {
+    enum CPU {
         /**
          * 32 bit legacy Intel
          */
@@ -90,7 +90,7 @@ public class LibraryLoader {
         }
     }
 
-    public enum OS {
+    enum OS {
         /**
          * MacOSX
          */

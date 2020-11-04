@@ -153,7 +153,9 @@ public:
             buf[i] = *it;
             std::advance(it, 1);
         }
-        return to_jintArray(env, buf, len);
+        auto jarray =  to_jintArray(env, buf, len);
+        delete[] buf;
+        return jarray;
     }
 
     static jintArray to_jintArray(JNIEnv *env, size_t *buf, jsize len) {

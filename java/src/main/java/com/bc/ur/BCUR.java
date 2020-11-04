@@ -1,6 +1,6 @@
 package com.bc.ur;
 
-public class BCUR {
+class BCUR {
 
     static {
         LibraryLoader.load("bc-ur");
