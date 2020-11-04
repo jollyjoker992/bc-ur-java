@@ -7,7 +7,11 @@ class BCUR {
     }
 
     // UR
-    static native UR UR_new(int len, String seed);
+    static native UR UR_new_from_len_seed_string(int len, String seed);
+
+    static native UR UR_new_from_message(String type, byte[] message);
+
+    static native byte[] UR_get_message(UR ur);
 
     // UREncoder
     static native String UREncoder_encode(UR ur);

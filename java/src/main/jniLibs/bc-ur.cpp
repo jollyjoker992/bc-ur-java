@@ -153,7 +153,7 @@ public:
             buf[i] = *it;
             std::advance(it, 1);
         }
-        auto jarray =  to_jintArray(env, buf, len);
+        auto jarray = to_jintArray(env, buf, len);
         delete[] buf;
         return jarray;
     }
@@ -348,7 +348,8 @@ extern "C" {
 #endif
 
 JNIEXPORT jobject JNICALL
-Java_com_bc_ur_BCUR_UR_1new(JNIEnv *env, jclass clazz, jint len, jstring seed) {
+Java_com_bc_ur_BCUR_UR_1new_1from_1len_1seed_1string(JNIEnv *env, jclass clazz, jint len,
+                                                     jstring seed) {
     if (seed == nullptr) {
         IllegalArgumentExceptionJni::throw_new(env, "Error: Java Seed is null");
         return nullptr;
@@ -362,6 +363,46 @@ Java_com_bc_ur_BCUR_UR_1new(JNIEnv *env, jclass clazz, jint len, jstring seed) {
         CborLite::encodeBytes(cbor, msg);
         auto jur = URJni::to_java_UR(env, "bytes", cbor);
         return jur;
+    });
+}
+
+JNIEXPORT jobject JNICALL
+Java_com_bc_ur_BCUR_UR_1new_1from_1message(JNIEnv *env, jclass clazz, jstring type,
+                                           jbyteArray message) {
+    if (message == nullptr) {
+        IllegalArgumentExceptionJni::throw_new(env, "Error: Java message is null");
+        return nullptr;
+    }
+
+    std::string ctype = "bytes";
+    if (type != nullptr) {
+        ctype = PrimitiveJni::copy_std_string(env, type);
+    }
+
+    return safetyCall<jobject>(env, nullptr, [&]() {
+        ByteVector cbor;
+        auto msg = PrimitiveJni::to_vector_uint8_t(env, message);
+        CborLite::encodeBytes(cbor, msg);
+        auto jur = URJni::to_java_UR(env, ctype, cbor);
+        return jur;
+    });
+}
+
+JNIEXPORT jbyteArray JNICALL
+Java_com_bc_ur_BCUR_UR_1get_1message(JNIEnv *env, jclass clazz, jobject ur) {
+    if (ur == nullptr) {
+        IllegalArgumentExceptionJni::throw_new(env, "Error: Java UR is null");
+        return nullptr;
+    }
+
+    return safetyCall<jbyteArray>(env, nullptr, [&]() {
+        auto cur = URJni::to_c_UR(env, ur);
+        auto cbor = cur->cbor();
+        auto i = cbor.begin();
+        auto end = cbor.end();
+        ByteVector msg;
+        CborLite::decodeBytes(i, end, msg);
+        return PrimitiveJni::to_jbyteArray(env, msg);
     });
 }
 

@@ -7,4 +7,12 @@ public class TestUtils {
             result[i] = bytes[i];
         return result;
     }
+
+    public static String bytes2Hex(byte[] bytes) {
+        StringBuilder builder = new StringBuilder();
+        for (byte b : bytes) {
+            builder.append(String.format("%x", b));
+        }
+        return builder.toString();
+    }
 }
