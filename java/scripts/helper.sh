@@ -5,16 +5,16 @@ check_dep() {
   echo $dep
   if is_osx; then
     if brew ls --versions "$dep" >/dev/null; then
-      echo "Package $dep already installed"
+      echo "Package '$dep' already installed"
     else
-      echo "Installing $dep..."
+      echo "Installing '$dep'..."
       echo y | brew install "$dep"
     fi
   else
     if dpkg -s "$dep" >/dev/null; then
-      echo "Package $dep already installed"
+      echo "Package '$dep' already installed"
     else
-      echo "Installing $dep..."
+      echo "Installing '$dep'..."
       echo y | apt-get install "$dep"
     fi
   fi
